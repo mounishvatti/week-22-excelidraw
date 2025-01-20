@@ -1,7 +1,7 @@
 import { initDraw } from "@/draw";
 import { useEffect, useRef, useState } from "react";
 import { IconButton } from "./IconButton";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, ZoomIn, ZoomOut, Hand, Grab, MousePointer, SquareDashedMousePointer, Eraser } from "lucide-react";
 import {
     Circle,
     Pencil,
@@ -97,10 +97,17 @@ function Topbar(
             style={{
                 position: "fixed",
                 top: 10,
-                left: 10,
+                left: "50%",
+                transform: "translateX(-50%)",
             }}
         >
-            <div className="flex gap-t items-center justify-center bg-gray-950 border border-gray-700 rounded-xl px-4 py-2">
+            <div className="flex gap-t items-center justify-center bg-slate-950 border border-gray-700 rounded-2xl px-4">
+                <div className="flex gap-4 m-2">
+                    <MousePointer className="text-gray-400 text-sm" />
+                    <Hand className="text-gray-400 text-sm" />
+                    <Eraser className="text-gray-400 text-sm" />
+                </div>
+                
                 <IconButton
                     onClick={() => {
                         setSelectedTool("pencil");
@@ -125,7 +132,7 @@ function Topbar(
                     icon={<Circle />}
                 >
                 </IconButton>
-                <label htmlFor="color" className="text-gray-100 font-medium">
+                <label htmlFor="color" className="text-gray-100 font-medium pr-2">
                     Stroke color 
                 </label>
                 <select
@@ -156,13 +163,23 @@ function Topbar(
                     <div className="flex gap-1">
                         <Plus
                             onClick={() => setStrokeWidth(strokeWidth + 1)}
-                            className="border border-gray-700 rounded-md text-gray-200 bg-slate-600"
+                            className="border border-gray-800 rounded-md text-gray-200"
                         />
                         <Minus
                             onClick={() => setStrokeWidth(strokeWidth - 1)}
-                            className="border border-gray-700 rounded-md text-gray-200 bg-slate-600"
+                            className="border border-gray-800 rounded-md text-gray-200"
                         />
-                        <span className="font-normal font-mono text-gray-100">{strokeWidth}px</span>
+                        <span className="font-medium font-sans text-gray-100">{strokeWidth}px</span>
+                    </div>
+                    <div className="flex gap-2 pl-5">
+                        <span className="font-medium text-md font-sans text-gray-100">Zoom</span>
+                        <ZoomIn
+                            className="rounded-md text-gray-200"
+                        />
+                        <ZoomOut
+                            className="rounded-md text-gray-200"
+                        />
+                        <SquareDashedMousePointer className="rounded-md text-gray-200" />
                     </div>
                 </div>
             </div>
