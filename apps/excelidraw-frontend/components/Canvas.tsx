@@ -132,8 +132,8 @@ function Topbar(
                     icon={<Circle />}
                 >
                 </IconButton>
-                <label htmlFor="color" className="text-gray-100 font-medium pr-2">
-                    Stroke color 
+                <label htmlFor="color" className="text-gray-100 font-medium pr-2 hidden md:block sm:block">
+                    Stroke 
                 </label>
                 <select
                     id="color"
@@ -157,8 +157,8 @@ function Topbar(
                     ))}
                 </select>
                 <div className="flex gap-1 pl-4">
-                    <label className="text-gray-100 text-md font-medium">
-                        Stroke width
+                    <label className="text-gray-100 text-md font-medium hidden md:block sm:block">
+                        Width
                     </label>
                     <div className="flex gap-1">
                         <Plus
@@ -172,14 +172,14 @@ function Topbar(
                         <span className="font-medium font-sans text-gray-100">{strokeWidth}px</span>
                     </div>
                     <div className="flex gap-2 pl-5">
-                        <span className="font-medium text-md font-sans text-gray-100">Zoom</span>
+                        <span className="font-medium text-md font-sans text-gray-100 hidden md:block sm:block">Zoom</span>
                         <ZoomIn
-                            className="rounded-md text-gray-200"
+                            className="rounded-md text-gray-200 hidden md:block sm:block"
                         />
                         <ZoomOut
-                            className="rounded-md text-gray-200"
+                            className="rounded-md text-gray-200 hidden md:block sm:block"
                         />
-                        <SquareDashedMousePointer className="rounded-md text-gray-200" />
+                        <SquareDashedMousePointer className="rounded-md text-gray-200 hidden md:block sm:block" />
                     </div>
                 </div>
             </div>
