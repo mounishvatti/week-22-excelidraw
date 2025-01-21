@@ -25,6 +25,9 @@ export class Game {
     private clicked: boolean;
     private startX = 0;
     private startY = 0;
+    private scale: number = 1;
+    private panX: number = 0;
+    private panY: number = 0;
     private selectedTool: Tool = "circle";
     private selectedColor = colors[7];
 
@@ -37,6 +40,8 @@ export class Game {
         this.roomId = roomId;
         this.socket = socket;
         this.clicked = false;
+        this.canvas.width = document.body.clientWidth;
+        this.canvas.height = document.body.clientHeight;
         this.init();
         this.initHandlers();
         this.initMouseHandlers();
@@ -48,6 +53,8 @@ export class Game {
         this.canvas.removeEventListener("mouseup", this.mouseUpHandler);
 
         this.canvas.removeEventListener("mousemove", this.mouseMoveHandler);
+
+        this.canvas.removeEventListener("wheel", this.zoomHandler);
     }
 
     setTool(tool: "circle" | "pencil" | "rect") {
@@ -63,6 +70,27 @@ export class Game {
         console.log(this.existingShapes);
         this.clearCanvas();
     }
+
+    zoomHandler = (e: WheelEvent) => {
+        e.preventDefault();
+
+        const scaleAmount = -e.deltaY / 500;
+        const newScale = this.scale * (1 + scaleAmount); 
+        if (newScale < 0.1 || newScale > 5) return; 
+    
+        const mouseX = e.clientX - this.canvas.offsetLeft;
+        const mouseY = e.clientY - this.canvas.offsetTop;
+        
+        const canvasMouseX = (mouseX - this.panX) / this.scale;
+        const canvasMouseY = (mouseY - this.panY) / this.scale;
+    
+        this.panX -= (canvasMouseX * newScale - canvasMouseX * this.scale);
+        this.panY -= (canvasMouseY * newScale - canvasMouseY * this.scale);
+    
+        this.scale = newScale;
+        this.clearCanvas();
+    };
+    
 
     initHandlers() {
         this.socket.onmessage = (event) => {
@@ -120,9 +148,10 @@ export class Game {
     }
 
     clearCanvas() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.setTransform(this.scale, 0, 0, this.scale, this.panX, this.panY);
+        this.ctx.clearRect(-this.panX/ this.scale, -this.panY/this.scale, this.canvas.width/this.scale, this.canvas.height/this.scale);
         this.ctx.fillStyle = "rgba(0, 0, 0)";
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillRect(-this.panX/this.scale, -this.panY/this.scale, this.canvas.width/this.scale, this.canvas.height/this.scale);
 
         this.existingShapes.map((shape) => {
             if (shape.type === "rect") {
@@ -172,16 +201,17 @@ export class Game {
     };
     mouseUpHandler = (e: MouseEvent) => {
         this.clicked = false;
-        const width = e.clientX - this.startX;
-        const height = e.clientY - this.startY;
+        const width = (e.clientX - this.startX) / this.scale;
+        const height = (e.clientY - this.startY) / this.scale;
+
         const selectedTool = this.selectedTool;
         const color = this.selectedColor.hex;
         let shape: Shape | null = null;
         if (this.selectedTool === "rect") {
             shape = {
                 type: "rect",
-                x: this.startX,
-                y: this.startY,
+                x: (this.startX - this.panX) / this.scale,
+                y: (this.startY - this.panY) / this.scale,
                 height,
                 width,
             };
@@ -190,8 +220,8 @@ export class Game {
             shape = {
                 type: "circle",
                 radius: radius,
-                centerX: this.startX + radius,
-                centerY: this.startY + radius,
+                centerX: ((this.startX - this.panX) / this.scale) + radius,
+                centerY: ((this.startY - this.panY) / this.scale) + radius,
             };
         } else if (this.selectedTool === "pencil") {
             const currentShape =
@@ -257,5 +287,7 @@ export class Game {
         this.canvas.addEventListener("mouseup", this.mouseUpHandler);
 
         this.canvas.addEventListener("mousemove", this.mouseMoveHandler);
+
+        this.canvas.addEventListener("wheel", this.zoomHandler);
     }
 }

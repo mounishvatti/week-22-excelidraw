@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 export default function SigninPage() {
     const router = useRouter();
     const [formData, setFormData] = useState({
-        name: "",
+        roomId: "",
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,17 +16,11 @@ export default function SigninPage() {
         setFormData((prev) => ({ ...prev, [id]: value }));
     };
 
-    const createRoom = async (e: React.FormEvent<HTMLFormElement>) => {
+    const joinRoom = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (formData.name) {
+        if (formData.roomId) {
             try {
-                const data = {
-                    name: formData.name,
-                };
-                const response = await axios.post("/room", data);
-                const roomId = response.data.roomId;
-                toast.success("Room created successfully");
-                router.push("/canvas/"+roomId);
+                router.push("/canvas/"+formData.roomId);
             } catch (error) {
                 console.log(error);
                 toast.error("Something went wrong");
@@ -51,22 +45,22 @@ export default function SigninPage() {
                                 Create a room and collaborate
                             </h1>
                         </div>
-                        <form className="mt-6" onSubmit={createRoom}>
+                        <form className="mt-6" onSubmit={joinRoom}>
                             <div className="mb-4">
                                 <label
-                                    htmlFor="name"
+                                    htmlFor="roomId"
                                     className="block text-sm font-medium text-gray-700"
                                 >
-                                    Please enter your name
+                                    Enter room ID
                                 </label>
                                 <input
                                     type="text"
-                                    id="name"
-                                    name="name"
-                                    value={formData.name}
+                                    id="roomId"
+                                    name="roomId"
+                                    value={formData.roomId}
                                     onChange={handleInputChange}
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    placeholder="Harkirat"
+                                    placeholder="1234"
                                 />
                             </div>
                             <div>
@@ -74,7 +68,7 @@ export default function SigninPage() {
                                     type="submit"
                                     className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none sm:text-sm font-medium"
                                 >
-                                    Create room
+                                    Join room
                                 </button>
                             </div>
                         </form>

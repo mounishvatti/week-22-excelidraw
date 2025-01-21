@@ -95,6 +95,7 @@ function Topbar(
     return (
         <div
             style={{
+                backgroundColor: "rgba(0, 0, 0, 0.8)",
                 position: "fixed",
                 top: 10,
                 left: "50%",
@@ -103,9 +104,9 @@ function Topbar(
         >
             <div className="flex gap-t items-center justify-center bg-slate-950 border border-gray-700 rounded-2xl px-4">
                 <div className="flex gap-4 m-2">
-                    <MousePointer className="text-gray-400 text-sm" />
-                    <Hand className="text-gray-400 text-sm" />
-                    <Eraser className="text-gray-400 text-sm" />
+                    <MousePointer className="text-gray-600 text-sm" />
+                    <Hand className="text-gray-600 text-sm" />
+                    <Eraser className="text-gray-600 text-sm" />
                 </div>
                 
                 <IconButton
@@ -132,54 +133,34 @@ function Topbar(
                     icon={<Circle />}
                 >
                 </IconButton>
-                <label htmlFor="color" className="text-gray-100 font-medium pr-2 hidden md:block sm:block">
+                <label htmlFor="color" className="text-gray-200 font-medium pr-2 hidden md:block sm:block">
                     Stroke 
                 </label>
-                <select
-                    id="color"
-                    value={selectedColor.hex}
-                    onChange={(e) =>
-                        setSelectedColor(
-                            colors.find((color) =>
-                                color.hex === e.target.value
-                            ) || colors[0],
-                        )}
-                    style={{
-                        backgroundColor: selectedColor.hex,
-                        cursor: "pointer",
-                    }}
-                    className="rounded-xl border border-gray-700 py-1 text-gray-200"
-                >
-                    {colors.map((color) => (
-                        <option key={color.hex} value={color.hex}>
-                            {color.name}
-                        </option>
-                    ))}
-                </select>
+                <button id="color" className="bg-white/80 rounded full px-2 py-2"></button>
                 <div className="flex gap-1 pl-4">
-                    <label className="text-gray-100 text-md font-medium hidden md:block sm:block">
+                    <label className="text-gray-600 text-md font-medium hidden md:block sm:block">
                         Width
                     </label>
                     <div className="flex gap-1">
                         <Plus
                             onClick={() => setStrokeWidth(strokeWidth + 1)}
-                            className="border border-gray-800 rounded-md text-gray-200"
+                            className="border border-gray-800 rounded-md text-gray-600"
                         />
                         <Minus
                             onClick={() => setStrokeWidth(strokeWidth - 1)}
-                            className="border border-gray-800 rounded-md text-gray-200"
+                            className="border border-gray-800 rounded-md text-gray-600"
                         />
                         <span className="font-medium font-sans text-gray-100">{strokeWidth}px</span>
                     </div>
                     <div className="flex gap-2 pl-5">
-                        <span className="font-medium text-md font-sans text-gray-100 hidden md:block sm:block">Zoom</span>
+                        <span className="font-medium text-md font-sans text-gray-600 hidden md:block sm:block">Zoom</span>
                         <ZoomIn
-                            className="rounded-md text-gray-200 hidden md:block sm:block"
+                            className="rounded-md text-gray-600 hidden md:block sm:block"
                         />
                         <ZoomOut
-                            className="rounded-md text-gray-200 hidden md:block sm:block"
+                            className="rounded-md text-gray-600 hidden disabled md:block sm:block"
                         />
-                        <SquareDashedMousePointer className="rounded-md text-gray-200 hidden md:block sm:block" />
+                        <SquareDashedMousePointer className="rounded-md text-gray-600 hidden md:block sm:block" />
                     </div>
                 </div>
             </div>
