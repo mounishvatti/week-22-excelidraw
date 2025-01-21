@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { WS_URL } from "../app/config";
+import { cookies } from "next/headers";
 
 export function useSocket() {
     const [loading, setLoading] = useState(true);
     const [socket, setSocket] = useState<WebSocket>();
 
+    const tokenVal = localStorage.getItem("token");
+
     useEffect(() => {
-        const ws = new WebSocket(`${WS_URL}?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNDMzOTdjMy01OTNkLTQwMjctYjExNC0yOTAyNGJhYjAyMTgiLCJpYXQiOjE3MzY2OTczMzB9.BxDMP3FqBsM6TrZcAGYFRA2FlmazFwQJ78mOHskatiM`);
+        const ws = new WebSocket(`${WS_URL}?token=${tokenVal}`);
         ws.onopen = () => {
             setLoading(false);
             setSocket(ws);

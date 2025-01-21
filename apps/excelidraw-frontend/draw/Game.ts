@@ -150,19 +150,39 @@ export class Game {
     clearCanvas() {
         this.ctx.setTransform(this.scale, 0, 0, this.scale, this.panX, this.panY);
         this.ctx.clearRect(-this.panX/ this.scale, -this.panY/this.scale, this.canvas.width/this.scale, this.canvas.height/this.scale);
-        this.ctx.fillStyle = "rgba(255, 255, 255)";
-        this.ctx.strokeStyle = "rgba(255, 255, 255)";
+        this.ctx.fillStyle = "rgba(0, 0, 0)";
         this.ctx.fillRect(-this.panX/this.scale, -this.panY/this.scale, this.canvas.width/this.scale, this.canvas.height/this.scale);
 
         this.existingShapes.map((shape) => {
             if (shape.type === "rect") {
                 this.ctx.strokeStyle = this.selectedColor.hex;
-                this.drawRect(shape);
+                this.ctx.strokeRect(
+                    shape.x,
+                    shape.y,
+                    shape.width,
+                    shape.height,
+                );
             } else if (shape.type === "circle") {
                 console.log(shape);
-                this.drawCircle(shape);
+                this.ctx.beginPath();
+                this.ctx.arc(
+                    shape.centerX,
+                    shape.centerY,
+                    Math.abs(shape.radius),
+                    0,
+                    Math.PI * 2,
+                );
+                this.ctx.stroke();
+                this.ctx.closePath();
             } else if (shape.type === "pencil") {
-                this.drawPencil(shape);
+                this.ctx.beginPath();
+                const points = shape.points;
+                this.ctx.moveTo(points[0].x, points[0].y);
+                for (const point of points) {
+                    this.ctx.lineTo(point.x, point.y);
+                }
+                this.ctx.stroke();
+                this.ctx.closePath();
             }
         });
     }
