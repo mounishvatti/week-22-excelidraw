@@ -160,14 +160,7 @@ export class Game {
             } else if (shape.type === "circle") {
                 this.drawCircle(shape);
             } else if (shape.type === "pencil") {
-                this.ctx.beginPath();
-                const points = shape.points;
-                this.ctx.moveTo(points[0].x, points[0].y);
-                for (const point of points) {
-                    this.ctx.lineTo(point.x, point.y);
-                }
-                this.ctx.stroke();
-                this.ctx.closePath();
+                this.drawPencil(shape);
             }
         });
     }
