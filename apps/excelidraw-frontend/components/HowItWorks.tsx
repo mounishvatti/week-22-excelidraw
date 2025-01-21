@@ -1,11 +1,20 @@
-import { CheckCircle } from 'lucide-react'
-import Image from "next/image";
+import { CheckCircle, Mail, PencilRuler, ExternalLink, Presentation } from 'lucide-react';
+import Image from 'next/image';
+
+const iconComponents = {
+  CheckCircle,
+  Mail,
+  PencilRuler,
+  ExternalLink,
+  Presentation,
+};
+
 const steps = [
-  { name: 'Create a board', description: 'Start with a blank canvas or choose from our templates.' },
-  { name: 'Invite your team', description: 'Share a link and collaborate in real-time with your team.' },
-  { name: 'Sketch and ideate', description: 'Use our intuitive tools to bring your ideas to life.' },
-  { name: 'Export and share', description: 'Save your work as an image or share a live link with stakeholders.' },
-]
+  { icon: 'Presentation', name: 'Create a board', description: 'Start with a blank canvas or choose from our templates.' },
+  { icon: 'Mail', name: 'Invite your team', description: 'Share a link and collaborate in real-time with your team.' },
+  { icon: 'PencilRuler', name: 'Sketch and ideate', description: 'Use our intuitive tools to bring your ideas to life.' },
+  { icon: 'ExternalLink', name: 'Export and share', description: 'Save your work as an image or share a live link with stakeholders.' },
+];
 
 export default function HowItWorks() {
   return (
@@ -30,17 +39,21 @@ export default function HowItWorks() {
             </p>
 
             <dl className="mt-10 space-y-10">
-              {steps.map((step) => (
-                <div key={step.name} className="relative">
-                  <dt>
-                    <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                      <CheckCircle className="h-6 w-6" aria-hidden="true" />
-                    </div>
-                    <p className="ml-16 text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">{step.name}</p>
-                  </dt>
-                  <dd className="mt-2 ml-16 text-base text-gray-500 dark:text-gray-400">{step.description}</dd>
-                </div>
-              ))}
+              {steps.map((step) => {
+                //@ts-ignore
+                const IconComponent = iconComponents[step.icon];
+                return (
+                  <div key={step.name} className="relative">
+                    <dt>
+                      <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                        <IconComponent className="h-6 w-6" aria-hidden="true" />
+                      </div>
+                      <p className="ml-16 text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">{step.name}</p>
+                    </dt>
+                    <dd className="mt-2 ml-16 text-base text-gray-500 dark:text-gray-400">{step.description}</dd>
+                  </div>
+                );
+              })}
             </dl>
           </div>
 
@@ -56,6 +69,5 @@ export default function HowItWorks() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
