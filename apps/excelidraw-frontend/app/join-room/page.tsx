@@ -2,8 +2,6 @@
 import { PencilRuler } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link";
-import axios from "axios";
 import { toast } from "react-toastify";
 export default function SigninPage() {
     const router = useRouter();
@@ -21,6 +19,7 @@ export default function SigninPage() {
         if (formData.roomId) {
             try {
                 router.push("/canvas/"+formData.roomId);
+                toast.success("Joined the room successfully");
             } catch (error) {
                 console.log(error);
                 toast.error("Something went wrong");
@@ -42,14 +41,17 @@ export default function SigninPage() {
                     <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
                         <div className="text-center">
                             <h1 className="text-2xl font-bold text-gray-800">
-                                Create a room and collaborate
+                                Join a room and collaborate
                             </h1>
+                        </div>
+                        <div className="text-center mt-1">
+                            <p className="text-sm text-gray-500 font-light">(Ask your friend to share the room ID)</p>
                         </div>
                         <form className="mt-6" onSubmit={joinRoom}>
                             <div className="mb-4">
                                 <label
                                     htmlFor="roomId"
-                                    className="block text-sm font-medium text-gray-700"
+                                    className="block text-md font-medium text-gray-700"
                                 >
                                     Enter room ID
                                 </label>
