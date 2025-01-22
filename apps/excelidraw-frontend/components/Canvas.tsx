@@ -27,6 +27,7 @@ export type Tool =
     | "undo"
     | "redo"
     | "hand"
+    | "point"
     ;
 
 export const colors = [
@@ -72,6 +73,14 @@ export function Canvas({
         game?.dec();
     }
 
+    // Update the canvas cursor when the selected tool changes
+    useEffect(() => {
+        if (canvasRef.current) {
+            const cursorClass = `cursor-${selectedTool}`;
+            canvasRef.current.className = cursorClass;
+        }
+    }, [selectedTool]);
+
     useEffect(() => { 
         game?.setTool(selectedTool);
     }, [selectedTool, game]);
@@ -99,6 +108,7 @@ export function Canvas({
                     ref={canvasRef}
                     width={window.innerWidth}
                     height={window.innerHeight}
+                    className="custom-cursor"
                 >
                 </canvas>
                 <Topbar
@@ -191,9 +201,13 @@ function Topbar(
                 }}
             >
                 <div className="flex gap-2 items-center justify-center bg-zinc-900 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-90 rounded-lg px-4 py-2 text-xs font-mono">
-                    <div className="flex gap-6 m-2">
-                        <MousePointer className="text-gray-600 text-xs" />
-                    </div>
+                <IconButton
+                        onClick={() => {
+                            setSelectedTool("point");
+                        }}
+                        activated={selectedTool === "point"}
+                        icon={<MousePointer />}
+                    />
 
                     <IconButton
                         onClick={() => {

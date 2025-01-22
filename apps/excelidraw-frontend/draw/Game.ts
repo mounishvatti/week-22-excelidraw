@@ -102,7 +102,8 @@ export class Game {
             | "erase"
             | "undo"
             | "redo"
-            | "hand",
+            | "hand"
+            | "point"
     ) {
         this.selectedTool = tool;
     }
@@ -118,12 +119,12 @@ export class Game {
     }
 
     inc() {
-        this.scale += 0.1;
+        this.scale += 0.2;
         this.clearCanvas();
     }
 
     dec() {
-        this.scale -= 0.1;
+        this.scale -= 0.2;
         this.clearCanvas();
     }
 
@@ -196,9 +197,7 @@ export class Game {
             const points = shape.points;
             this.ctx.beginPath();
             this.ctx.moveTo(points[0].x, points[0].y);
-            points.forEach((point) =>
-                this.ctx.lineTo(point.x, point.y)
-            );
+            points.forEach((point) => this.ctx.lineTo(point.x, point.y));
             this.ctx.stroke();
             this.ctx.closePath();
         }
@@ -227,9 +226,7 @@ export class Game {
             this.canvas.width / this.scale,
             this.canvas.height / this.scale,
         );
-
-        this.ctx.restore();
-
+        //this.ctx.restore();
         this.existingShapes.map((shape) => {
             if (shape.type === "rect") {
                 this.ctx.strokeStyle = this.selectedColor.hex;
@@ -259,8 +256,37 @@ export class Game {
         }
     };
     mouseUpHandler = (e: MouseEvent) => {
+        this.clicked = false;
+        const width = (e.clientX - this.startX) / this.scale;
+        const height = (e.clientY - this.startY) / this.scale;
+        let shape: Shape | null = null;
         if (this.selectedTool === "hand") {
             this.isDragging = false;
+        }
+        else if (this.selectedTool === "rect") {
+            shape = {
+                type: "rect",
+                x: (this.startX - this.panX) / this.scale,
+                y: (this.startY - this.panY) / this.scale,
+                height,
+                width,
+            };
+        } else if (this.selectedTool === "circle") {
+            const radius = Math.max(width, height) / 2;
+            shape = {
+                type: "circle",
+                radius: radius,
+                centerX: ((this.startX - this.panX) / this.scale) + radius,
+                centerY: ((this.startY - this.panY) / this.scale) + radius,
+            };
+        } else if (this.selectedTool === "pencil") {
+            const currentShape =
+                this.existingShapes[this.existingShapes.length - 1];
+            this.socket.send(JSON.stringify({
+                type: "chat",
+                message: JSON.stringify({ shape: currentShape }),
+                roomId: this.roomId,
+            }));
         } else if (this.selectedTool === "erase") {
             this.existingShapes = [];
             this.clearCanvas();
@@ -278,55 +304,25 @@ export class Game {
                 message: JSON.stringify({ action: "clear" }),
                 roomId: this.roomId,
             }));
-        } else {
-            this.clicked = false;
-            const width = (e.clientX - this.startX) / this.scale;
-            const height = (e.clientY - this.startY) / this.scale;
-            let shape: Shape | null = null;
-            if (this.selectedTool === "rect") {
-                shape = {
-                    type: "rect",
-                    x: (this.startX - this.panX) / this.scale,
-                    y: (this.startY - this.panY) / this.scale,
-                    height,
-                    width,
-                };
-            } else if (this.selectedTool === "circle") {
-                const radius = Math.max(width, height) / 2;
-                shape = {
-                    type: "circle",
-                    radius: radius,
-                    centerX: ((this.startX - this.panX) / this.scale) + radius,
-                    centerY: ((this.startY - this.panY) / this.scale) + radius,
-                };
-            } else if (this.selectedTool === "pencil") {
-                const currentShape =
-                    this.existingShapes[this.existingShapes.length - 1];
-                this.socket.send(JSON.stringify({
-                    type: "chat",
-                    message: JSON.stringify({ shape: currentShape }),
-                    roomId: this.roomId,
-                }));
-            }
-
-            if (!shape) {
-                return;
-            }
-
-            this.existingShapes.push(shape);
-
-            this.socket.send(JSON.stringify({
-                type: "chat",
-                message: JSON.stringify({
-                    shape,
-                }),
-                roomId: this.roomId,
-            }));
-            this.saveState();
         }
+
+        if (!shape) {
+            return;
+        }
+
+        this.existingShapes.push(shape);
+
+        this.socket.send(JSON.stringify({
+            type: "chat",
+            message: JSON.stringify({
+                shape,
+            }),
+            roomId: this.roomId,
+        }));
+        this.saveState();
     };
     mouseMoveHandler = (e: MouseEvent) => {
-        if (this.selectedTool === "hand" && this.isDragging) {
+        if (this.clicked && this.selectedTool === "hand" && this.isDragging) {
             const dx = e.clientX - this.lastMousePosition.x;
             const dy = e.clientY - this.lastMousePosition.y;
 
@@ -367,13 +363,12 @@ export class Game {
                     radius,
                 });
             } else if (this.selectedTool === "pencil") {
-                const currentShape = this
-                    .existingShapes[this.existingShapes.length - 1] as Shape;
-                (currentShape as {
-                    type: "pencil";
-                    points: { x: number; y: number }[];
-                }).points.push({ x: e.clientX, y: e.clientY });
-                this.drawPencil(currentShape);
+                const currentShape =
+                    this.existingShapes[this.existingShapes.length - 1];
+                if (currentShape && currentShape.type === "pencil") {
+                    currentShape.points.push({ x: e.clientX, y: e.clientY });
+                    this.drawPencil(currentShape);
+                }
             }
         }
     };
