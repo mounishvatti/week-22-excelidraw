@@ -113,17 +113,17 @@ export function Canvas({
             <div style={{
                 position: "fixed",
                 bottom: 26,
-                right: "40%",
+                left: "20%",
                 transform: "translateX(-50%)",
             }}
-                className=" text-white/50 rounded-sm flex items-center justify-center max-w-auto gap-5"
+                className=" text-gray-400 rounded-sm flex items-center justify-center max-w-auto gap-5"
             >
                 <button onClick={handleUndo} type="button"
-                    className="cursor-pointer text-gray-200 hover:text-indigo-300"
+                    className="cursor-pointer text-gray-200 hover:text-indigo-400"
                 >
                     <Undo2 />
                 </button>
-
+                <span className="text-sm text-zinc-600"> | </span>
                 <button onClick={handleRedo} type="button"
                     className="cursor-pointer text-gray-200 hover:text-indigo-300"
                 >
@@ -134,7 +134,7 @@ export function Canvas({
                 style={{
                     position: "fixed",
                     bottom: 15,
-                    left: "45%",
+                    left: "10%",
                     transform: "translateX(-50%)",
                     padding: "10px",
                     borderRadius: "10px",
@@ -142,7 +142,7 @@ export function Canvas({
                 className="bg-zinc-900 text-white/80 rounded-lg flex items-center justify-center gap-4 max-w-auto"
             >
                 <button
-                    onClick={() => setZoom(zoom - 2)}
+                    onClick={decreaseZoom}
                     type="button"
                     className="pl-4 pr-4 cursor-pointer"
                 >
@@ -152,7 +152,7 @@ export function Canvas({
                     {zoom}%
                 </p>
                 <button
-                    onClick={() => setZoom(zoom + 2)}
+                    onClick={increaseZoom}
                     type="button"
                     className="pl-4 pr-4 cursor-pointer"
                 >
