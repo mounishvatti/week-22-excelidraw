@@ -5,10 +5,14 @@ import { initDraw } from "@/draw";
 import { useEffect, useRef, useState } from "react";
 import { Canvas } from "./Canvas";
 
-export function RoomCanvas({roomId}: {roomId: string}) {
+export function RoomCanvas({ roomId }: { roomId: string }) {
     const [socket, setSocket] = useState<WebSocket | null>(null);
 
-    const tokenVal = localStorage.getItem("token");
+    let tokenVal = null;
+
+    if (typeof window !== "undefined") {
+        tokenVal = window.localStorage.getItem("token");
+    }
 
     useEffect(() => {
         const ws = new WebSocket(`${WS_URL}?token=${tokenVal}`);
@@ -17,21 +21,24 @@ export function RoomCanvas({roomId}: {roomId: string}) {
             setSocket(ws);
             const data = JSON.stringify({
                 type: "join_room",
-                roomId
+                roomId,
             });
             console.log(data);
-            ws.send(data)
-        }
-        
-    }, [])
-   
+            ws.send(data);
+        };
+    }, []);
+
     if (!socket) {
-        return <div>
-            Connecting to server....
-        </div>
+        return (
+            <div>
+                Connecting to server....
+            </div>
+        );
     }
 
-    return <div>
-        <Canvas roomId={roomId} socket={socket} />
-    </div>
+    return (
+        <div>
+            <Canvas roomId={roomId} socket={socket} />
+        </div>
+    );
 }
