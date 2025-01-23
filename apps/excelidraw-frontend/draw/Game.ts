@@ -1,4 +1,4 @@
-import { Color, Tool } from "@/components/Canvas";
+import { Color, Tool, Theme } from "@/components/Canvas";
 import { getExistingShapes } from "./http";
 
 type Shape = {
@@ -35,6 +35,7 @@ export class Game {
     private panY: number = 0;
     private selectedTool: Tool = "circle";
     private selectedColor: Color = "#ffffff";
+    private theme: Theme = "rgb(24, 24, 27)";
     private undoStack: Shape[][];
     private redoStack: Shape[][];
 
@@ -54,7 +55,7 @@ export class Game {
         this.socket = socket;
         this.clicked = false;
         this.ctx.strokeStyle = this.selectedColor.toString();
-        this.ctx.fillStyle = "rgba(24, 24, 27)";
+        this.ctx.fillStyle = this.theme.toString();
         this.canvas.width = document.body.clientWidth;
         this.canvas.height = document.body.clientHeight;
         this.undoStack = [];
@@ -139,6 +140,18 @@ export class Game {
         }
     }
 
+    setTheme(
+        theme:
+            | "rgb(255, 255, 255)"
+            | "rgb(24, 24, 27)",
+    ) {
+        this.theme = theme;
+        if (this.ctx) {
+            this.ctx.fillStyle = this.theme === "rgb(24, 24, 27)" ? "rgb(24,24,27)" : "rgb(255,255,255)";
+            this.ctx.strokeStyle = this.theme === "rgb(255, 255, 255)" ? "#000000" : "#ffffff";
+        }
+    }
+
     async init() {
         this.existingShapes = await getExistingShapes(this.roomId);
         console.log(this.existingShapes);
@@ -210,7 +223,7 @@ export class Game {
     drawText(shape: Shape) {
         if (shape?.type === "text") {
             this.ctx.font = "14px Arial"; // Customize font as needed
-            this.ctx.fillStyle = this.selectedColor.toString();
+            this.ctx.fillStyle = this.theme.toString();
             this.ctx.fillText(shape.content, shape.x, shape.y);
         }
     }
@@ -259,7 +272,7 @@ export class Game {
             this.canvas.width / this.scale,
             this.canvas.height / this.scale,
         );
-        this.ctx.fillStyle = "rgba(24, 24, 27)";
+        this.ctx.fillStyle = this.theme.toString();
         this.ctx.fillRect(
             -this.panX / this.scale,
             -this.panY / this.scale,

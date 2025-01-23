@@ -18,6 +18,8 @@ import {
     UsersRound,
     ZoomIn,
     ZoomOut,
+    Moon,
+    Sun,
 } from "lucide-react";
 import { Circle, Pencil, Square } from "lucide-react";
 import { Game } from "@/draw/Game";
@@ -57,6 +59,8 @@ const colors: Color[] = [
     "#ffffff", // White
 ];
 
+export type Theme = "rgb(24, 24, 27)" | "rgb(255, 255, 255)";
+
 export function Canvas({
     roomId,
     socket,
@@ -69,7 +73,12 @@ export function Canvas({
     const [zoom, setZoom] = useState(75);
     const [selectedTool, setSelectedTool] = useState<Tool>("circle");
     const [selectedColor, setSelectedColor] = useState<Color>("#ffffff");
+    const [theme, setTheme] = useState<Theme>("rgb(24, 24, 27)");
     //const [strokeWidth, setStrokeWidth] = useState<number>(1);
+
+    const toggleTheme = () => {
+        setTheme((prev) => (prev === "rgb(24, 24, 27)" ? "rgb(255, 255, 255)" : "rgb(24, 24, 27)"));
+    };
 
     const handleUndo = () => {
         game?.undo();
@@ -99,6 +108,10 @@ export function Canvas({
             canvasRef.current.className = cursorClass;
         }
     }, [selectedTool]);
+
+    useEffect(() => {
+        game?.setTheme(theme);
+    }, [theme, game]);
 
     useEffect(() => {
         game?.setColor(selectedColor);
@@ -151,7 +164,18 @@ export function Canvas({
                     selectedTool={selectedTool}
                     setSelectedColor={setSelectedColor}
                     selectedColor={selectedColor}
+                    theme={theme}
+                    setTheme={setTheme}
                 />
+                <div style={{
+                    position: "fixed",
+                    top: 15,
+                    right: 15,
+                }}>
+                    <button onClick={toggleTheme} className={`p-2 rounded-md ${theme === "rgb(24, 24, 27)" ? "text-gray-100" : "text-black"} transition-colors duration-300`}>
+                        {theme === "rgb(24, 24, 27)" ? <Moon /> : <Sun />}
+                    </button>
+                </div>
             </div>
             <>
                 {/* Undo/Redo Section */}
@@ -227,7 +251,7 @@ function ColorSelector({
     return (
         <div className="relative inline-block">
             <button
-                className="p-3 rounded-full"
+                className="p-2.5 border-2 border-dashed border-gray-600 rounded-full"
                 style={{ backgroundColor: selectedColor }}
                 onClick={() => setShowDropdown((prev) => !prev)}
             >
@@ -260,11 +284,15 @@ function Topbar(
         setSelectedTool,
         selectedColor,
         setSelectedColor,
+        theme,
+        setTheme,
     }: {
         selectedTool: Tool;
         setSelectedTool: (s: Tool) => void;
         selectedColor: Color;
         setSelectedColor: (s: Color) => void;
+        theme: Theme;
+        setTheme: (s: Theme) => void;
     },
 ) {
     const [isCopied, setIsCopied] = useState(false);
@@ -291,7 +319,7 @@ function Topbar(
                     left: "50%",
                     transform: "translateX(-50%)",
                 }}
-                className="flex gap-2 items-center justify-center bg-zinc-800 shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-90 rounded-lg px-4 py-2 text-xs font-mono sm:flex-wrap sm:justify-start sm:left-5 sm:top-5"
+                className={`${theme === "rgb(24, 24, 27)"? "bg-zinc-800": "bg-white"} flex gap-2 items-center justify-center shadow-lg bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-90 rounded-lg px-4 py-2 text-xs font-mono sm:flex-wrap sm:justify-start sm:left-5 sm:top-5`}
             >
                 {/* Tool Icons */}
                 <IconButton
@@ -382,7 +410,7 @@ function Topbar(
                         collaborativeMode ? "bg-green-600" : "bg-none"
                     } transition-colors duration-300`}
                 >
-                    <UsersRound className="text-gray-100" />
+                    <UsersRound className={`${theme === "rgb(24, 24, 27)" ? "text-gray-100" : "text-gray-400"}`} />
                 </button>
             </div>
         </>
