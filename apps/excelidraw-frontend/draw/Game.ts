@@ -1,4 +1,4 @@
-import { colors, Tool } from "@/components/Canvas";
+import { Color, Tool } from "@/components/Canvas";
 import { getExistingShapes } from "./http";
 
 type Shape = {
@@ -15,6 +15,11 @@ type Shape = {
 } | {
     type: "pencil";
     points: { x: number; y: number }[];
+} | {
+    type: "text";
+    x: number;
+    y: number;
+    content: string;
 };
 
 export class Game {
@@ -29,7 +34,7 @@ export class Game {
     private panX: number = 0;
     private panY: number = 0;
     private selectedTool: Tool = "circle";
-    private selectedColor = colors[7];
+    private selectedColor: Color = "#ffffff";
     private undoStack: Shape[][];
     private redoStack: Shape[][];
 
@@ -46,6 +51,7 @@ export class Game {
         this.roomId = roomId;
         this.socket = socket;
         this.clicked = false;
+        this.ctx.strokeStyle = this.selectedColor.toString();
         this.canvas.width = document.body.clientWidth;
         this.canvas.height = document.body.clientHeight;
         this.undoStack = [];
@@ -104,12 +110,26 @@ export class Game {
             | "redo"
             | "hand"
             | "point"
+            | "text",
     ) {
         this.selectedTool = tool;
     }
 
-    setColor(color: string) {
-        this.selectedColor.hex = color;
+    setColor(color: 
+        | "#7a7a7a"
+        | "#ffa6a6"
+        | "#a6ffa6"
+        | "#a6a6ff"
+        | "#ffffa6"
+        | "#ffa6ff"
+        | "#a6ffff"
+        | "#ffffff",
+    ) {
+        this.selectedColor = color;
+        if (this.ctx) {
+            this.ctx.strokeStyle = color;
+            //this.ctx.fillStyle = color;
+        }
     }
 
     async init() {
@@ -161,24 +181,36 @@ export class Game {
     }
 
     drawShape(shape: Shape) {
-        this.ctx.strokeStyle = this.selectedColor.hex;
+        this.ctx.strokeStyle = this.selectedColor.toString();
         if (shape.type === "rect") {
             this.drawRect(shape);
         } else if (shape.type === "circle") {
             this.drawCircle(shape);
         } else if (shape.type === "pencil") {
             this.drawPencil(shape);
+        } else if (shape.type === "text") {
+            this.drawText(shape);
         }
     }
 
     drawRect(shape: Shape) {
         if (shape.type === "rect") {
+            this.ctx.strokeStyle = this.selectedColor.toString();
             this.ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
+        }
+    }
+
+    drawText(shape: Shape) {
+        if (shape.type === "text") {
+            this.ctx.font = "14px Arial"; // Customize font as needed
+            this.ctx.fillStyle = this.selectedColor.toString();
+            this.ctx.fillText(shape.content, shape.x, shape.y);
         }
     }
 
     drawCircle(shape: Shape) {
         if (shape.type === "circle") {
+            this.ctx.strokeStyle = this.selectedColor.toString();
             this.ctx.beginPath();
             this.ctx.arc(
                 shape.centerX,
@@ -194,6 +226,7 @@ export class Game {
 
     drawPencil(shape: Shape) {
         if (shape.type === "pencil") {
+            this.ctx.strokeStyle = this.selectedColor.toString();
             const points = shape.points;
             this.ctx.beginPath();
             this.ctx.moveTo(points[0].x, points[0].y);
@@ -226,10 +259,10 @@ export class Game {
             this.canvas.width / this.scale,
             this.canvas.height / this.scale,
         );
-        //this.ctx.restore();
+        this.ctx.restore();
         this.existingShapes.map((shape) => {
             if (shape.type === "rect") {
-                this.ctx.strokeStyle = this.selectedColor.hex;
+                this.ctx.strokeStyle = this.selectedColor.toString();
                 this.drawRect(shape);
             } else if (shape.type === "circle") {
                 this.drawCircle(shape);
@@ -240,7 +273,52 @@ export class Game {
     }
 
     mouseDownHandler = (e: MouseEvent) => {
-        if (this.selectedTool === "hand") {
+        if (this.selectedTool === "text") {
+            const x = (e.clientX - this.panX) / this.scale;
+            const y = (e.clientY - this.panY) / this.scale;
+    
+            // Create a temporary input element
+            const input = document.createElement("input");
+            input.type = "text";
+            input.style.position = "absolute";
+            input.style.left = `${e.clientX}px`;
+            input.style.top = `${e.clientY}px`;
+            input.style.fontSize = "14px";
+            input.style.zIndex = "1000";
+    
+            // Append the input to the body
+            document.body.appendChild(input);
+    
+            input.focus();
+    
+            // When the user finishes typing, save the text and draw it on the canvas
+            input.addEventListener("blur", () => {
+                const content = input.value;
+                document.body.removeChild(input);
+    
+                if (content.trim() !== "") {
+                    const shape: Shape = { type: "text", x, y, content };
+                    this.existingShapes.push(shape);
+    
+                    this.socket.send(JSON.stringify({
+                        type: "chat",
+                        message: JSON.stringify({ shape }),
+                        roomId: this.roomId,
+                    }));
+    
+                    this.saveState();
+                    this.clearCanvas();
+                }
+            });
+    
+            input.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    input.blur(); // Trigger the blur event to save and remove the input
+                }
+            });
+            return;
+        }
+        else if (this.selectedTool === "hand") {
             this.isDragging = true;
             this.lastMousePosition = { x: e.clientX, y: e.clientY };
         }
