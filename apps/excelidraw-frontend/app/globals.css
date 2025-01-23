@@ -83,11 +83,11 @@
   cursor: crosshair;
 }
 .cursor-erase {
-  cursor: url('../assets/icons8-eraser-64.png'), auto;
+  cursor: url('../assets/icons8-eraser-32.png'), auto;
 }
 .cursor-clear {
-  cursor: not-allowed;
+  cursor: url('../assets/icons8-clear-40.png'), auto;
 }
 .cursor-point {
-  cursor: url('../assets/icons8-select-cursor-48.png'), auto;
+  cursor: url('../assets/icons8-cursor-32.png'), auto;
 }
