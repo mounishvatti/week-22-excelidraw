@@ -172,7 +172,7 @@ export function Canvas({
                     top: 15,
                     right: 15,
                 }}>
-                    <button onClick={toggleTheme} className={`p-2 rounded-md ${theme === "rgb(24, 24, 27)" ? "text-gray-100" : "text-black"} transition-colors duration-300`}>
+                    <button onClick={toggleTheme} className={`p-2 rounded-md ${theme === "rgb(24, 24, 27)" ? "text-gray-100" : "text-zinc-600"} transition-colors duration-300`} title="Toggle theme">
                         {theme === "rgb(24, 24, 27)" ? <Moon /> : <Sun />}
                     </button>
                 </div>
@@ -186,21 +186,21 @@ export function Canvas({
                         left: "50%",
                         transform: "translateX(-50%)",
                     }}
-                    className="text-gray-400 bg-zinc-900 rounded-md p-2 flex items-center justify-center gap-5 max-w-auto sm:bottom-16 sm:left-5 sm:translate-x-0 cursor-pointer"
+                    className={`${theme === "rgb(24, 24, 27)"? "bg-zinc-900 text-gray-300": "bg-white text-gray-400"} rounded-md p-2 flex shadow-md items-center justify-center gap-5 max-w-auto sm:bottom-16 sm:left-5 sm:translate-x-0 cursor-pointer`}
                 >
                     <button
                         onClick={handleUndo}
                         type="button"
-                        className="cursor-pointer text-gray-200 hover:text-indigo-400 pl-2"
+                        className="cursor-pointer hover:text-indigo-400 pl-2"
                         title="Undo"
                     >
                         <Undo2 />
                     </button>
-                    <span className="text-sm text-zinc-600">|</span>
+                    <span className="text-sm text-zinc-300">|</span>
                     <button
                         onClick={handleRedo}
                         type="button"
-                        className="cursor-pointer text-gray-200 hover:text-indigo-300 pr-2"
+                        className="cursor-pointer hover:text-indigo-300 pr-2"
                         title="Redo"
                     >
                         <Redo2 />
@@ -213,7 +213,7 @@ export function Canvas({
                         padding: "10px",
                         borderRadius: "10px",
                     }}
-                    className="fixed bottom-15 left-10% transform -translate-x-1/2 bg-zinc-900 text-white/80 rounded-lg flex items-center justify-center gap-4 max-w-auto sm:bottom-5 sm:left-5 sm:translate-x-0"
+                    className={`fixed bottom-15 left-10% transform -translate-x-1/2 ${theme === "rgb(24, 24, 27)"? "bg-zinc-900 text-white/80": "bg-white text-gray-500"} shadow-md rounded-lg flex items-center justify-center gap-4 max-w-auto sm:bottom-5 sm:left-5 sm:translate-x-0`}
                 >
                     <button
                         onClick={decreaseZoom}
