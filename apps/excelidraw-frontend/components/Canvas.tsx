@@ -143,7 +143,7 @@ export function Canvas({
                     ref={canvasRef}
                     width={window.innerWidth}
                     height={window.innerHeight}
-                    className="custom-cursor"
+                    className="custom-cursor bg-zinc-800"
                 >
                 </canvas>
                 <Topbar
@@ -291,7 +291,7 @@ function Topbar(
                     left: "50%",
                     transform: "translateX(-50%)",
                 }}
-                className="flex gap-2 items-center justify-center bg-zinc-900 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-90 rounded-lg px-4 py-2 text-xs font-mono sm:flex-wrap sm:justify-start sm:left-5 sm:top-5"
+                className="flex gap-2 items-center justify-center bg-zinc-800 shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-90 rounded-lg px-4 py-2 text-xs font-mono sm:flex-wrap sm:justify-start sm:left-5 sm:top-5"
             >
                 {/* Tool Icons */}
                 <IconButton
@@ -378,8 +378,8 @@ function Topbar(
                 {/* Collaboration Button */}
                 <button
                     onClick={handleCopy}
-                    className={`p-2 rounded-md shadow-md ${
-                        collaborativeMode ? "bg-green-600" : "bg-zinc-900"
+                    className={`p-2 rounded-md ${
+                        collaborativeMode ? "bg-green-600" : "bg-none"
                     } transition-colors duration-300`}
                 >
                     <UsersRound className="text-gray-100" />

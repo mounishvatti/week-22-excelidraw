@@ -30,7 +30,7 @@ export function RoomCanvas({ roomId }: { roomId: string }) {
 
     if (!socket) {
         return (
-            <div>
+            <div className="flex justify-center items-center h-full">
                 Connecting to server....
             </div>
         );

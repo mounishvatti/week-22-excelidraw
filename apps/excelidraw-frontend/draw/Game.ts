@@ -54,6 +54,7 @@ export class Game {
         this.socket = socket;
         this.clicked = false;
         this.ctx.strokeStyle = this.selectedColor.toString();
+        this.ctx.fillStyle = "rgba(24, 24, 27)";
         this.canvas.width = document.body.clientWidth;
         this.canvas.height = document.body.clientHeight;
         this.undoStack = [];
@@ -258,7 +259,7 @@ export class Game {
             this.canvas.width / this.scale,
             this.canvas.height / this.scale,
         );
-        this.ctx.fillStyle = "rgba(0, 0, 0)";
+        this.ctx.fillStyle = "rgba(24, 24, 27)";
         this.ctx.fillRect(
             -this.panX / this.scale,
             -this.panY / this.scale,
@@ -423,7 +424,7 @@ export class Game {
 
         this.existingShapes.push(shape);
         this.pathErase = [];
-
+        console.log(JSON.stringify({ type: "chat", message: JSON.stringify({ shape }), roomId: this.roomId }));
         this.socket.send(JSON.stringify({
             type: "chat",
             message: JSON.stringify({
