@@ -192,6 +192,7 @@ export function Canvas({
                         onClick={handleUndo}
                         type="button"
                         className="cursor-pointer text-gray-200 hover:text-indigo-400 pl-2"
+                        title="Undo"
                     >
                         <Undo2 />
                     </button>
@@ -200,6 +201,7 @@ export function Canvas({
                         onClick={handleRedo}
                         type="button"
                         className="cursor-pointer text-gray-200 hover:text-indigo-300 pr-2"
+                        title="Redo"
                     >
                         <Redo2 />
                     </button>
@@ -237,9 +239,15 @@ export function Canvas({
 function ColorSelector({
     selectedColor,
     setSelectedColor,
+    theme,
+    setTheme,
+    title,
 }: {
     selectedColor: Color;
     setSelectedColor: (s: Color) => void;
+    theme: Theme;
+    setTheme: (s: Theme) => void;
+    title?: string;
 }) { // Default color is Gray
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -254,12 +262,13 @@ function ColorSelector({
                 className="p-2.5 border-2 border-dashed border-gray-600 rounded-full"
                 style={{ backgroundColor: selectedColor }}
                 onClick={() => setShowDropdown((prev) => !prev)}
+                title={title}
             >
                 {/* The button displays the selected color */}
             </button>
             {/* Dropdown menu */}
             {showDropdown && (
-                <div className="absolute top-full mt-6 left-0 bg-zinc-900 shadow rounded-sm z-10">
+                <div className={`absolute top-full mt-6 left-0 shadow-md rounded-sm z-10 ${theme === "rgb(24, 24, 27)" ? "bg-zinc-800" : "bg-white"}`}>
                     <ul className="flex space-x-2 p-2">
                         {colors.map((color) => (
                             <li
@@ -329,6 +338,7 @@ function Topbar(
                     activated={selectedTool === "point"}
                     icon={<MousePointer2 />}
                     className="hidden sm:inline-block"
+                    title="Pointer"
                 />
 
                 <IconButton
@@ -338,6 +348,7 @@ function Topbar(
                     activated={selectedTool === "select"}
                     icon={<SquareDashedMousePointer />}
                     className="hidden sm:inline-block"
+                    title="Select"
                 />
 
                 <IconButton
@@ -346,6 +357,7 @@ function Topbar(
                     }}
                     activated={selectedTool === "hand"}
                     icon={<Hand />}
+                    title="Grab"
                 />
 
                 <IconButton
@@ -354,6 +366,7 @@ function Topbar(
                     }}
                     activated={selectedTool === "pencil"}
                     icon={<Pencil />}
+                    title="Pencil"
                 />
 
                 <IconButton
@@ -362,6 +375,7 @@ function Topbar(
                     }}
                     activated={selectedTool === "rect"}
                     icon={<Square />}
+                    title="Polygon"
                 />
 
                 <IconButton
@@ -370,11 +384,15 @@ function Topbar(
                     }}
                     activated={selectedTool === "circle"}
                     icon={<Circle />}
+                    title="Circle"
                 />
 
                 <ColorSelector
                     selectedColor={selectedColor}
                     setSelectedColor={setSelectedColor}
+                    theme={theme}
+                    setTheme={setTheme}
+                    title="Color"
                 />
 
                 <IconButton
@@ -383,6 +401,7 @@ function Topbar(
                     }}
                     activated={selectedTool === "erase"}
                     icon={<Eraser />}
+                    title="Erase"
                 />
 
                 <IconButton
@@ -392,6 +411,7 @@ function Topbar(
                     activated={selectedTool === "text"}
                     icon={<TypeOutline />}
                     className="hidden sm:inline-block"
+                    title="Text"
                 />
 
                 <span className="opacity-50 text-gray-300">|</span>
@@ -402,6 +422,7 @@ function Topbar(
                     }}
                     activated={selectedTool === "clear"}
                     icon={<Trash2 />}
+                    title="Clear canvas"
                 />
                 {/* Collaboration Button */}
                 <button
@@ -409,6 +430,7 @@ function Topbar(
                     className={`p-2 rounded-md ${
                         collaborativeMode ? "bg-green-600" : "bg-none"
                     } transition-colors duration-300`}
+                    title="Collaborative mode"
                 >
                     <UsersRound className={`${theme === "rgb(24, 24, 27)" ? "text-gray-100" : "text-gray-400"}`} />
                 </button>
