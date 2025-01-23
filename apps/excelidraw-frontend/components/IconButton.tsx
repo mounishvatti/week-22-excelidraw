@@ -15,8 +15,11 @@ export function IconButton({
 }) {
     return (
         <div
-            className={`cursor-pointer rounded-lg text-xs p-2 hover:bg-gray ${className} ${
-                activated ? "text-indigo-100 bg-indigo-500/60" : "text-gray-400"
+            // style={{
+            //     fontSize: "1.5rem",
+            // }}
+            className={`cursor-pointer rounded-lg p-1.5 hover:bg-gray ${className} ${
+                activated ? "text-indigo-100 bg-indigo-500/60" : "text-zinc-400"
             }`}
             onClick={onClick}
             title={title}

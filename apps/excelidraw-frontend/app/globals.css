@@ -91,3 +91,9 @@
 .cursor-point {
   cursor: url('../assets/icons8-cursor-32.png'), auto;
 }
+.cursor-line {
+  cursor: crosshair;
+}
+.cursor-rhombus {
+  cursor: crosshair;
+}

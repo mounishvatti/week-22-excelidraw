@@ -3,23 +3,26 @@ import { useEffect, useRef, useState } from "react";
 import { IconButton } from "./IconButton";
 import { useRouter } from "next/navigation";
 import {
+    AlignJustify,
+    Diamond,
     Eraser,
     Grab,
     Hand,
     Minus,
+    Moon,
     MousePointer,
     MousePointer2,
+    MoveRight,
     Plus,
     Redo2,
     SquareDashedMousePointer,
+    Sun,
     Trash2,
     TypeOutline,
     Undo2,
     UsersRound,
     ZoomIn,
     ZoomOut,
-    Moon,
-    Sun,
 } from "lucide-react";
 import { Circle, Pencil, Square } from "lucide-react";
 import { Game } from "@/draw/Game";
@@ -36,7 +39,10 @@ export type Tool =
     | "hand"
     | "point"
     | "text"
-    | "select";
+    | "select"
+    | "line"
+    | "arrow"
+    | "rhombus";
 
 export type Color =
     | "#7a7a7a"
@@ -74,11 +80,9 @@ export function Canvas({
     const [selectedTool, setSelectedTool] = useState<Tool>("circle");
     const [selectedColor, setSelectedColor] = useState<Color>("#ffffff");
     const [theme, setTheme] = useState<Theme>("rgb(24, 24, 27)");
+    const [sidebarClicked, setSidebarClicked] = useState(false);
     //const [strokeWidth, setStrokeWidth] = useState<number>(1);
 
-    const toggleTheme = () => {
-        setTheme((prev) => (prev === "rgb(24, 24, 27)" ? "rgb(255, 255, 255)" : "rgb(24, 24, 27)"));
-    };
 
     const handleUndo = () => {
         game?.undo();
@@ -167,14 +171,78 @@ export function Canvas({
                     theme={theme}
                     setTheme={setTheme}
                 />
-                <div style={{
-                    position: "fixed",
-                    top: 15,
-                    right: 15,
-                }}>
-                    <button onClick={toggleTheme} className={`p-2 rounded-md ${theme === "rgb(24, 24, 27)" ? "text-gray-100" : "text-zinc-600"} transition-colors duration-300`} title="Toggle theme">
-                        {theme === "rgb(24, 24, 27)" ? <Moon /> : <Sun />}
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 15,
+                        left: 15,
+                    }}
+                >
+                    <button
+                        onClick={() => {
+                            setSidebarClicked((prev) => !prev)
+                            setTimeout(() => {
+                                setSidebarClicked(false); // Automatically close after 10 seconds
+                            }, 10000); // 10 seconds delay
+                        }}
+                        className={`${
+                            theme === "rgb(24, 24, 27)"
+                                ? "text-gray-300 bg-zinc-800"
+                                : "text-gray-600 bg-zinc-100"
+                        } p-2 rounded-md`}
+                        title="Sidebar"
+                    >
+                        <AlignJustify size={16} />
                     </button>
+                    {sidebarClicked && (
+                        <div className={`mt-2 ${theme==="rgb(24, 24, 27)"? "bg-zinc-800" : "bg-zinc-50"} p-2 rounded-md shadow-md`}>
+                            <div>
+                                <ColorSelector
+                                    selectedColor={selectedColor}
+                                    setSelectedColor={setSelectedColor}
+                                    theme={theme}
+                                    setTheme={setTheme}
+                                    title="Color"
+                                />
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <p
+                                    className={`${
+                                        theme === "rgb(24, 24, 27)"
+                                            ? "text-zinc-400"
+                                            : "text-zinc-600"
+                                    } text-sm font-sans`}
+                                >
+                                    Theme:
+                                </p>
+
+                                <div className="flex gap-2 p-1">
+                                    <button
+                                        className={`${
+                                            theme === "rgb(24, 24, 27)"
+                                                ? "text-zinc-300"
+                                                : "text-zinc-50 bg-indigo-500/60 p-0.5 rounded-sm"
+                                        }`}
+                                        onClick={()=> setTheme("rgb(255, 255, 255)")}
+                                        title="Light"
+                                    >
+                                        <Sun size={16} />
+                                    </button>
+                                    <button
+                                        className={`${
+                                            theme === "rgb(24, 24, 27)"
+                                                ? "text-zinc-300 bg-indigo-500/60 p-0.5 rounded-sm"
+                                                : "text-zinc-600"
+                                        }`}
+                                        onClick={()=> setTheme("rgb(24, 24, 27)")}
+                                        title="Dark"
+                                    >
+                                        <Moon size={16}/>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
             <>
@@ -186,7 +254,11 @@ export function Canvas({
                         left: "50%",
                         transform: "translateX(-50%)",
                     }}
-                    className={`${theme === "rgb(24, 24, 27)"? "bg-zinc-900 text-gray-300": "bg-white text-gray-400"} rounded-md p-2 flex shadow-md items-center justify-center gap-5 max-w-auto sm:bottom-16 sm:left-5 sm:translate-x-0 cursor-pointer`}
+                    className={`${
+                        theme === "rgb(24, 24, 27)"
+                            ? "bg-zinc-800 text-zinc-300"
+                            : "bg-white text-zinc-600"
+                    } rounded-md p-2 flex shadow-md items-center justify-center gap-5 max-w-auto sm:bottom-16 sm:left-5 sm:translate-x-0 cursor-pointer`}
                 >
                     <button
                         onClick={handleUndo}
@@ -194,7 +266,7 @@ export function Canvas({
                         className="cursor-pointer hover:text-indigo-400 pl-2"
                         title="Undo"
                     >
-                        <Undo2 />
+                        <Undo2 size={16}/>
                     </button>
                     <span className="text-sm text-zinc-300">|</span>
                     <button
@@ -203,7 +275,7 @@ export function Canvas({
                         className="cursor-pointer hover:text-indigo-300 pr-2"
                         title="Redo"
                     >
-                        <Redo2 />
+                        <Redo2 size={16}/>
                     </button>
                 </div>
 
@@ -213,22 +285,26 @@ export function Canvas({
                         padding: "10px",
                         borderRadius: "10px",
                     }}
-                    className={`fixed bottom-15 left-10% transform -translate-x-1/2 ${theme === "rgb(24, 24, 27)"? "bg-zinc-900 text-white/80": "bg-white text-gray-500"} shadow-md rounded-lg flex items-center justify-center gap-4 max-w-auto sm:bottom-5 sm:left-5 sm:translate-x-0`}
+                    className={`fixed bottom-15 left-10% transform -translate-x-1/2 ${
+                        theme === "rgb(24, 24, 27)"
+                            ? "bg-zinc-800 text-white/80"
+                            : "bg-white text-zinc-500"
+                    } shadow-md rounded-lg flex items-center justify-center gap-4 max-w-auto sm:bottom-5 sm:left-5 sm:translate-x-0`}
                 >
                     <button
                         onClick={decreaseZoom}
                         type="button"
                         className="pl-4 pr-4 cursor-pointer"
                     >
-                        <Minus />
+                        <Minus size={20}/>
                     </button>
-                    <p className="text-sm">{zoom}%</p>
+                    <p className="text-xs">{zoom}%</p>
                     <button
                         onClick={increaseZoom}
                         type="button"
                         className="pl-4 pr-4 cursor-pointer"
                     >
-                        <Plus />
+                        <Plus size={20}/>
                     </button>
                 </div>
             </>
@@ -258,22 +334,37 @@ function ColorSelector({
 
     return (
         <div className="relative inline-block">
-            <button
-                className="p-2.5 border-2 border-dashed border-gray-600 rounded-full"
-                style={{ backgroundColor: selectedColor }}
-                onClick={() => setShowDropdown((prev) => !prev)}
-                title={title}
-            >
-                {/* The button displays the selected color */}
-            </button>
-            {/* Dropdown menu */}
+            <div className="flex gap-2 items-center">
+                <p
+                    className={`${
+                        theme === "rgb(24, 24, 27)"
+                            ? "text-zinc-400"
+                            : "text-zinc-600"
+                    } text-sm`}
+                >
+                    Choose a color:
+                </p>
+                <button
+                    className="p-2 rounded-sm border border-zinc-400"
+                    style={{ backgroundColor: selectedColor }}
+                    onClick={() => setShowDropdown((prev) => !prev)}
+                    title={title}
+                >
+                    {/* The button displays the selected color */}
+                </button>
+            </div>
+            {/* Dropdown to select color */}
             {showDropdown && (
-                <div className={`absolute top-full mt-6 left-0 shadow-md rounded-sm z-10 ${theme === "rgb(24, 24, 27)" ? "bg-zinc-800" : "bg-white"}`}>
-                    <ul className="flex space-x-2 p-2">
+                <div
+                    className={`absolute top-full left-0 shadow-md rounded-sm z-10 ${
+                        theme === "rgb(24, 24, 27)" ? "bg-zinc-800" : "bg-zinc-50"
+                    }`}
+                >
+                    <ul className="grid grid-cols-4 gap-2 p-2">
                         {colors.map((color) => (
                             <li
                                 key={color}
-                                className="w-5 h-5 rounded-full cursor-pointer"
+                                className="w-4 h-4 rounded-sm cursor-pointer border border-zinc-400"
                                 style={{ backgroundColor: color }}
                                 onClick={() => handleColorSelect(color)} // Handle color selection
                                 title={color.toString()} // Tooltip to show color hex code
@@ -328,7 +419,9 @@ function Topbar(
                     left: "50%",
                     transform: "translateX(-50%)",
                 }}
-                className={`${theme === "rgb(24, 24, 27)"? "bg-zinc-800": "bg-white"} flex gap-2 items-center justify-center shadow-lg bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-90 rounded-lg px-4 py-2 text-xs font-mono sm:flex-wrap sm:justify-start sm:left-5 sm:top-5`}
+                className={`${
+                    theme === "rgb(24, 24, 27)" ? "bg-zinc-800" : "bg-white"
+                } flex gap-2 items-center justify-center shadow-lg bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-90 rounded-lg px-4 py-1 text-xs font-mono sm:flex-wrap sm:justify-start sm:left-5 sm:top-5`}
             >
                 {/* Tool Icons */}
                 <IconButton
@@ -336,7 +429,7 @@ function Topbar(
                         setSelectedTool("point");
                     }}
                     activated={selectedTool === "point"}
-                    icon={<MousePointer2 />}
+                    icon={<MousePointer2 size={16} />}
                     className="hidden sm:inline-block"
                     title="Pointer"
                 />
@@ -346,7 +439,7 @@ function Topbar(
                         setSelectedTool("select");
                     }}
                     activated={selectedTool === "select"}
-                    icon={<SquareDashedMousePointer />}
+                    icon={<SquareDashedMousePointer size={16} />}
                     className="hidden sm:inline-block"
                     title="Select"
                 />
@@ -356,17 +449,8 @@ function Topbar(
                         setSelectedTool("hand");
                     }}
                     activated={selectedTool === "hand"}
-                    icon={<Hand />}
+                    icon={<Hand size={16} />}
                     title="Grab"
-                />
-
-                <IconButton
-                    onClick={() => {
-                        setSelectedTool("pencil");
-                    }}
-                    activated={selectedTool === "pencil"}
-                    icon={<Pencil />}
-                    title="Pencil"
                 />
 
                 <IconButton
@@ -374,8 +458,17 @@ function Topbar(
                         setSelectedTool("rect");
                     }}
                     activated={selectedTool === "rect"}
-                    icon={<Square />}
-                    title="Polygon"
+                    icon={<Square size={16} />}
+                    title="Rectangle"
+                />
+
+                <IconButton
+                    onClick={() => {
+                        setSelectedTool("rhombus");
+                    }}
+                    activated={selectedTool === "rhombus"}
+                    icon={<Diamond size={16} />}
+                    title="Rhombus"
                 />
 
                 <IconButton
@@ -383,16 +476,35 @@ function Topbar(
                         setSelectedTool("circle");
                     }}
                     activated={selectedTool === "circle"}
-                    icon={<Circle />}
+                    icon={<Circle size={16} />}
                     title="Circle"
                 />
 
-                <ColorSelector
-                    selectedColor={selectedColor}
-                    setSelectedColor={setSelectedColor}
-                    theme={theme}
-                    setTheme={setTheme}
-                    title="Color"
+                <IconButton
+                    onClick={() => {
+                        setSelectedTool("line");
+                    }}
+                    activated={selectedTool === "line"}
+                    icon={<Minus size={16} />}
+                    title="Line"
+                />
+
+                <IconButton
+                    onClick={() => {
+                        setSelectedTool("arrow");
+                    }}
+                    activated={selectedTool === "arrow"}
+                    icon={<MoveRight size={16} />}
+                    title="Arrow"
+                />
+
+                <IconButton
+                    onClick={() => {
+                        setSelectedTool("pencil");
+                    }}
+                    activated={selectedTool === "pencil"}
+                    icon={<Pencil size={16} />}
+                    title="Pencil"
                 />
 
                 <IconButton
@@ -400,7 +512,7 @@ function Topbar(
                         setSelectedTool("erase");
                     }}
                     activated={selectedTool === "erase"}
-                    icon={<Eraser />}
+                    icon={<Eraser size={16} />}
                     title="Erase"
                 />
 
@@ -409,7 +521,7 @@ function Topbar(
                         setSelectedTool("text");
                     }}
                     activated={selectedTool === "text"}
-                    icon={<TypeOutline />}
+                    icon={<TypeOutline size={16} />}
                     className="hidden sm:inline-block"
                     title="Text"
                 />
@@ -421,7 +533,7 @@ function Topbar(
                         setSelectedTool("clear");
                     }}
                     activated={selectedTool === "clear"}
-                    icon={<Trash2 />}
+                    icon={<Trash2 size={16} />}
                     title="Clear canvas"
                 />
                 {/* Collaboration Button */}
@@ -432,7 +544,14 @@ function Topbar(
                     } transition-colors duration-300`}
                     title="Collaborative mode"
                 >
-                    <UsersRound className={`${theme === "rgb(24, 24, 27)" ? "text-gray-100" : "text-gray-400"}`} />
+                    <UsersRound
+                        size={16}
+                        className={`${
+                            theme === "rgb(24, 24, 27)"
+                                ? "text-zinc-400"
+                                : "text-zinc-500"
+                        }`}
+                    />
                 </button>
             </div>
         </>
