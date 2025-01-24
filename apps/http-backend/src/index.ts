@@ -81,9 +81,15 @@ app.post("/signin", async (req, res) => {
         `token=${token}; HttpOnly; Secure; Path=/; SameSite=Strict`,
     );
 
-    res.json({
-        token
-    })
+    const username = user?.name;
+    const userId = user?.id;
+
+    res.status(200).json({
+        token,
+        username,
+        userId
+    });
+
 })
 
 app.post("/room", middleware, async (req, res) => {

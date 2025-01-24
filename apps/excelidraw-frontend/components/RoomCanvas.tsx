@@ -4,11 +4,14 @@ import { WS_URL } from "@/config";
 import { initDraw } from "@/draw";
 import { useEffect, useRef, useState } from "react";
 import { Canvas } from "./Canvas";
+import { useDispatch, useSelector } from "react-redux";
 
 export function RoomCanvas({ roomId }: { roomId: string }) {
     const [socket, setSocket] = useState<WebSocket | null>(null);
 
     let tokenVal = null;
+
+    const tokenValStore = useSelector((state: { user: { token: string } }) => state.user.token);
 
     if (typeof window !== "undefined") {
         tokenVal = window.localStorage.getItem("token");

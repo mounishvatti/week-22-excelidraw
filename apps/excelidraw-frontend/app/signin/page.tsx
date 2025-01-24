@@ -4,7 +4,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setSession, setUserId, setUsername, setToken } from "@repo/store/userSlice";
 export default function SigninPage() {
+    const dispatch = useDispatch();
     const router = useRouter();
     const [formData, setFormData] = useState({
         email: "",
@@ -25,11 +28,19 @@ export default function SigninPage() {
                     password: formData.password,
                 };
                 const response = await axios.post("/signin", data);
+                const token = response.data.token;
+                const userId = response.data.userId;
+                const username = response.data.username;
+                dispatch(setToken(token));
+                dispatch(setUserId(userId));
+                dispatch(setUsername(username));
+                dispatch(setSession(true));
+
                 toast.success("Logged in successfully");
                 router.push("/canvas");
             } catch (error) {
                 // TODO: Handle specific errors
-                toast.error("Invalid credentials");
+                toast.error("Invalid credentials, please try again");
             }
         }
     };
