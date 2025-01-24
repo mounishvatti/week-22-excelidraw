@@ -18,7 +18,7 @@ export function IconButton({
             // style={{
             //     fontSize: "1.5rem",
             // }}
-            className={`cursor-pointer rounded-lg p-1.5 hover:bg-gray ${className} ${
+            className={`cursor-pointer rounded-sm p-1.5 hover:bg-gray ${className} ${
                 activated ? "text-indigo-100 bg-indigo-500/60" : "text-zinc-400"
             }`}
             onClick={onClick}

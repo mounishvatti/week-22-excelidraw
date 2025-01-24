@@ -70,7 +70,7 @@ export function Topbar(
                 }}
                 className={`${
                     theme === "rgb(24, 24, 27)" ? "bg-zinc-800" : "bg-white"
-                } flex gap-2 items-center justify-center shadow-lg bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-90 rounded-lg px-4 py-1 text-xs font-mono sm:flex-wrap sm:justify-start sm:left-5 sm:top-5`}
+                } flex gap-2 items-center justify-center shadow-lg bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-90 rounded-lg px-4 py-2 text-xs font-mono sm:flex-wrap sm:justify-start sm:left-5 sm:top-5`}
             >
                 {/* Tool Icons */}
                 <IconButton
@@ -188,8 +188,8 @@ export function Topbar(
                 {/* Collaboration Button */}
                 <button
                     onClick={handleCopy}
-                    className={`p-2 rounded-md ${
-                        collaborativeMode ? "bg-green-600" : "bg-none"
+                    className={`p-1.5 rounded-sm ${
+                        collaborativeMode ? "bg-green-800" : "bg-none"
                     } transition-colors duration-300`}
                     title="Collaborative mode"
                 >
@@ -197,7 +197,7 @@ export function Topbar(
                         size={16}
                         className={`${
                             theme === "rgb(24, 24, 27)"
-                                ? "text-zinc-400"
+                                ? "text-zinc-300"
                                 : "text-zinc-500"
                         }`}
                     />
