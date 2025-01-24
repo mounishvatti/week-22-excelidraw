@@ -79,7 +79,7 @@ export default function SignupPage() {
                                     name="name"
                                     value={formData.username}
                                     onChange={handleInputChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="mt-1 block w-full px-3 py-2 border text-zinc-800 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                     placeholder="Harkirat Singh"
                                 />
                             </div>
@@ -96,7 +96,7 @@ export default function SignupPage() {
                                     name="email"
                                     value={formData.email}
                                     onChange={handleInputChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="mt-1 block w-full px-3 py-2 text-zinc-800 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                     placeholder="harkiratsingh@gmail.com"
                                 />
                             </div>
@@ -113,7 +113,7 @@ export default function SignupPage() {
                                     name="password"
                                     value={formData.password}
                                     onChange={handleInputChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="mt-1 block w-full px-3 py-2 text-zinc-800 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                     placeholder=""
                                 />
                             </div>

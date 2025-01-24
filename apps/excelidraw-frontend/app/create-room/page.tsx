@@ -65,7 +65,7 @@ export default function SigninPage() {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="mt-1 block w-full px-3 py-2 border text-zinc-800 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                     placeholder="Harkirat"
                                 />
                             </div>
@@ -76,6 +76,9 @@ export default function SigninPage() {
                                 >
                                     Create room
                                 </button>
+                            </div>
+                            <div className="text-center mt-4">
+                                <p className="text-zinc-700">Want to join a room? <a className="underline" href="/join-room">Join room</a></p>
                             </div>
                         </form>
                     </div>
