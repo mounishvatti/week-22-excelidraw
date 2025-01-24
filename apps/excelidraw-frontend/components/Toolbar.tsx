@@ -189,17 +189,13 @@ export function Topbar(
                 <button
                     onClick={handleCopy}
                     className={`p-1.5 rounded-sm ${
-                        collaborativeMode ? "bg-green-800" : "bg-none"
+                        collaborativeMode ? "bg-green-700" : "bg-none"
                     } transition-colors duration-300`}
                     title="Collaborative mode"
                 >
                     <UsersRound
                         size={16}
-                        className={`${
-                            theme === "rgb(24, 24, 27)"
-                                ? "text-zinc-300"
-                                : "text-zinc-500"
-                        }`}
+                        className="text-zinc-200"
                     />
                 </button>
             </div>
