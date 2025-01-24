@@ -369,22 +369,6 @@ export class Game {
         });
     }
 
-    findDistance(x1: number, y1: number, x2: number, y2: number) {
-        return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-    }
-
-    isPointInRect(x: number, y: number, shape: Shape): boolean {
-        if (!shape || shape.type !== "rect") return false;
-        return (x >= shape.x && x <= shape.x + shape.width && y >= shape.y &&
-            y <= shape.y + shape.height);
-    }
-
-    isPointInCircle(x: number, y: number, shape: Shape): boolean {
-        if (!shape || shape.type !== "circle") return false;
-        const distance = this.findDistance(x, y, shape.centerX, shape.centerY);
-        return distance <= shape.radius;
-    }
-
     mouseDownHandler = (e: MouseEvent) => {
         if (this.selectedTool === "text") {
             const x = (e.clientX - this.panX) / this.scale;
@@ -440,15 +424,6 @@ export class Game {
                 type: "pencil",
                 points: [{ x: e.clientX, y: e.clientY }],
             });
-        } else if (this.selectedTool === "select") {
-            for (const shape of this.existingShapes) {
-                if (
-                    this.isPointInRect(e.clientX, e.clientY, shape) ||
-                    this.isPointInCircle(e.clientX, e.clientY, shape)
-                ) {
-                    this.shapeSelect = shape;
-                }
-            }
         } else if (this.selectedTool === "erase") {
             this.pathErase.push([e.clientX, e.clientY]);
         } else if (this.selectedTool === "hand") {
@@ -456,6 +431,13 @@ export class Game {
             this.lastMousePosition = { x: e.clientX, y: e.clientY };
         } else if (this.selectedTool === "line") {
             // complete the logic
+            this.existingShapes.push({
+                type: "line",
+                x1: this.startX,
+                y1: this.startY,
+                x2: e.clientX,
+                y2: e.clientY,
+            })
         }
     };
     mouseUpHandler = (e: MouseEvent) => {
@@ -489,15 +471,6 @@ export class Game {
                 message: JSON.stringify({ shape: currentShape }),
                 roomId: this.roomId,
             }));
-        } else if (this.selectedTool === "erase") {
-            this.existingShapes = this.existingShapes.filter((shape) => {
-                if (!shape) return true;
-                return !this.pathErase.some((point) => {
-                    this.isPointInRect(point[0], point[1], shape) ||
-                        this.isPointInCircle(point[0], point[1], shape);
-                });
-            });
-            this.clearCanvas();
         } else if (this.selectedTool === "clear") {
             this.existingShapes = [];
             this.clearCanvas();
@@ -510,9 +483,9 @@ export class Game {
             shape = {
                 type: "line",
                 x1: (this.startX - this.panX) / this.scale,
-                y1: (this.startY - this.panY) / this.scale,
-                x2: (e.clientX - this.panX) / this.scale,
-                y2: (e.clientY - this.panY) / this.scale,
+                y1: (this.startY - this.panY) / this.scale, 
+                x2: e.clientX,
+                y2: e.clientY,
             };
             // Add WebSocket send for line
             this.socket.send(JSON.stringify({
@@ -580,8 +553,9 @@ export class Game {
             const height = e.clientY - this.startY;
 
             //console.log(`Mouse Move: X: ${currentX}, Y: ${currentY}`);
-            //this.clearCanvas();
+            this.clearCanvas();
             if (this.selectedTool === "rect") {
+                
                 this.drawRect({
                     type: "rect",
                     x: this.startX,
@@ -591,7 +565,6 @@ export class Game {
                 });
             } else if (this.selectedTool === "circle") {
                 const radius = Math.max(width, height) / 2;
-
                 this.drawCircle({
                     type: "circle",
                     centerX: this.startX + radius,
@@ -627,12 +600,6 @@ export class Game {
                     x2: e.clientX,
                     y2: e.clientY,
                 });
-                this.tempLine = {
-                    x1: this.startX,
-                    y1: this.startY,
-                    x2: e.clientX,
-                    y2: e.clientY,
-                }
             } else if (this.selectedTool === "rhombus") {
                 this.clearCanvas();
                 this.drawRhombus({
@@ -642,12 +609,6 @@ export class Game {
                     width: Math.abs(e.clientX - this.startX),
                     height: Math.abs(e.clientY - this.startY),
                 });
-                this.tempRhombus = {
-                    x: Math.min(this.startX, e.clientX),
-                    y: Math.min(this.startY, e.clientY),
-                    width: Math.abs(e.clientX - this.startX),
-                    height: Math.abs(e.clientY - this.startY),
-                }
             }
         }
     };
